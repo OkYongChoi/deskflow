@@ -176,7 +176,8 @@ A=5,\qquad B=3,\qquad d=4,\qquad
 S=\frac{R}{A-B+d}=\frac{R}{6}
 $$
 
-The phase advances by `0.2` radians:
+The phase advances by `0.4` radians. This changes only the sampling interval;
+the hypotrochoid and its screen-space radius are unchanged:
 
 $$
 x_n=c_x+S\left[(A-B)\cos t_n+d\cos\left(\frac{A-B}{B}t_n\right)\right]
@@ -188,15 +189,23 @@ $$
 
 ## Golden Spiral
 
-The implementation completes two turns in 72 updates while expanding from
-$0.1R$ to $R$:
+The implementation samples an outward two-turn spiral in 24 updates while
+expanding from $0.1R$ to $R$. It then follows the same samples in reverse so a
+new cycle does not jump directly from $R$ back to $0.1R$:
 
 $$
-k=n\bmod72
+q=(n-1)\bmod46
 $$
 
 $$
-\theta_k=\frac{4\pi k}{71},\qquad
+k=\begin{cases}
+q,&q<24\\
+46-q,&q\ge24
+\end{cases}
+$$
+
+$$
+\theta_k=\frac{4\pi k}{23},\qquad
 b=\frac{\ln10}{4\pi}
 $$
 
@@ -214,19 +223,20 @@ after every quarter turn.
 
 ## Damped Pendulum
 
-The implementation is a parametric visual approximation that restarts every
-120 updates:
+The implementation is a parametric visual approximation. It samples two time
+units per cursor update and restarts after 60 updates, covering the same
+120-unit damping window as the earlier one-unit sampling:
 
 $$
-m=n\bmod120
-$$
-
-$$
-D_m=e^{-0.018m}
+m=n\bmod60,\qquad t_m=2m
 $$
 
 $$
-\theta_m=0.95D_m\cos(0.3m)
+D_m=e^{-0.018t_m}
+$$
+
+$$
+\theta_m=0.95D_m\cos(0.3t_m)
 $$
 
 $$
