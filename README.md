@@ -2,6 +2,18 @@
 
 DeskFlow is a Windows desktop utility that performs configured cursor actions at a repeating interval.
 
+## Download
+
+Download the latest standalone Windows executable from
+[GitHub Releases](https://github.com/OkYongChoi/deskflow/releases/latest).
+
+1. Download `DeskFlow.exe`.
+2. Run it directly; no installer is required.
+3. Use `F7` to start and `F8` to stop.
+
+Because the executable is not code-signed, Windows SmartScreen may ask you to confirm
+before running it. Release checksums are published with each release.
+
 ## Features
 
 - Eleven movement modes: random walk, Lissajous figure-eight, inertial drift, Levy walk,
@@ -36,3 +48,9 @@ DeskFlow is a Windows desktop utility that performs configured cursor actions at
 
 - This project targets Windows for real mouse control.
 - For non-Windows environments, only the core logic and unit tests are safe to run.
+- Use DeskFlow only on systems and applications you control, and follow applicable
+  workplace, service, and automation policies.
+
+## License
+
+DeskFlow is available under the [MIT License](LICENSE).
