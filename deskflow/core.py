@@ -230,7 +230,8 @@ class TaskRunner:
         )
 
     def _next_spirograph_point(self) -> Point:
-        self._phase += 0.2
+        # Sample farther along the same curve so R=50 produces visible motion.
+        self._phase += 0.4
         outer_radius, inner_radius, pen_offset = 5.0, 3.0, 4.0
         scale = self._config.move_radius / (outer_radius - inner_radius + pen_offset)
         center_x, center_y = self._center
@@ -245,9 +246,12 @@ class TaskRunner:
         )
 
     def _next_golden_spiral_point(self) -> Point:
-        cycle_length = 72
-        cycle_step = self._step_index % cycle_length
-        theta = math.tau * 2.0 * cycle_step / (cycle_length - 1)
+        outward_sample_count = 24
+        round_trip_length = 2 * (outward_sample_count - 1)
+        cycle_step = (self._step_index - 1) % round_trip_length
+        if cycle_step >= outward_sample_count:
+            cycle_step = round_trip_length - cycle_step
+        theta = math.tau * 2.0 * cycle_step / (outward_sample_count - 1)
         growth = math.log(10.0) / (math.tau * 2.0)
         radius = self._config.move_radius * 0.1 * math.exp(growth * theta)
         center_x, center_y = self._center
@@ -257,9 +261,11 @@ class TaskRunner:
         )
 
     def _next_pendulum_point(self) -> Point:
-        cycle_step = self._step_index % 120
-        damping = math.exp(-0.018 * cycle_step)
-        angle = 0.95 * damping * math.cos(cycle_step * 0.3)
+        sample_scale = 2.0
+        cycle_step = self._step_index % 60
+        sample_time = cycle_step * sample_scale
+        damping = math.exp(-0.018 * sample_time)
+        angle = 0.95 * damping * math.cos(sample_time * 0.3)
         radius = self._config.move_radius
         center_x, center_y = self._center
         return self._bounded_point(

@@ -1,4 +1,6 @@
+import math
 import random
+import statistics
 import time
 import unittest
 from unittest.mock import patch
@@ -138,6 +140,56 @@ class CoreTests(unittest.TestCase):
 
                 self.assertTrue(all(0 <= x < 200 and 0 <= y < 200 for x, y in points))
                 self.assertGreater(len(set(points)), 1)
+
+    def test_default_radius_has_a_visible_typical_step_in_every_mode(self) -> None:
+        radius = 50
+        for mode in SUPPORTED_MODES:
+            with self.subTest(mode=mode):
+                random.seed(12345)
+                mouse = FakeMouse((1000, 1000))
+                runner = TaskRunner(
+                    TaskConfig(
+                        start_position=mouse.position,
+                        mode=mode,
+                        move_radius=radius,
+                    ),
+                    mouse,
+                )
+                previous = mouse.position
+                distances = []
+                for _ in range(240):
+                    point = runner._next_point()
+                    distances.append(math.dist(previous, point))
+                    mouse.position = point
+                    previous = point
+
+                typical_step = statistics.median(distances)
+                self.assertGreaterEqual(typical_step, radius * 0.1)
+                self.assertLessEqual(typical_step, radius)
+
+    def test_golden_spiral_scales_with_radius_without_reset_jump(self) -> None:
+        medians = []
+        for radius in (50, 100):
+            mouse = FakeMouse((1000, 1000))
+            runner = TaskRunner(
+                TaskConfig(
+                    start_position=mouse.position,
+                    mode="golden_spiral",
+                    move_radius=radius,
+                ),
+                mouse,
+            )
+            points = [runner._next_point() for _ in range(47)]
+            distances = [math.dist(start, end) for start, end in zip(points, points[1:])]
+            medians.append(statistics.median(distances))
+
+            self.assertLessEqual(max(distances), radius * 0.55)
+            self.assertLessEqual(
+                max(math.dist((1000, 1000), point) for point in points),
+                radius,
+            )
+
+        self.assertGreater(medians[1], medians[0] * 1.9)
 
 
 if __name__ == "__main__":
