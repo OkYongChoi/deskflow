@@ -2,6 +2,8 @@
 
 DeskFlow is a Windows desktop utility that performs configured cursor actions at a repeating interval.
 
+![DeskFlow demo](docs/deskflow-demo.gif)
+
 ## Download
 
 Download the latest standalone Windows executable from
@@ -24,6 +26,13 @@ before running it. Release checksums are published with each release.
 - Number of clicks per target
 - Global hotkeys (Windows): `F7` start, `F8` stop
 - Safe stop at any time
+
+## Use cases
+
+- Authorized long-running demonstrations and presentations that need controlled cursor activity
+- UI QA and input-path experimentation
+- Kiosk and display environments where desktop automation is permitted
+- Visual exploration of mathematical motion patterns
 
 ## Movement mode reference
 
